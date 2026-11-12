@@ -1,35 +1,32 @@
-import { useRouter } from '@/lib/router';
-import { Layout } from '@/components/Layout';
-import { Dashboard } from '@/pages/Dashboard';
-import { ScanPage } from '@/pages/ScanPage';
-import { ReviewPage } from '@/pages/ReviewPage';
-import { InvoicesPage } from '@/pages/InvoicesPage';
-import { InvoiceDetailPage } from '@/pages/InvoiceDetailPage';
-import { useInvoices } from '@/lib/invoiceStore';
+import { useCallback, useState } from 'react';
+import { Navbar } from '@/components/Navbar';
+import { Hero } from '@/components/Hero';
+import { Services } from '@/components/Services';
+import { Products } from '@/components/Products';
+import { Capabilities } from '@/components/Capabilities';
+import { Contact } from '@/components/Contact';
+import { Footer } from '@/components/Footer';
 
 function App() {
-  const { route, navigate } = useRouter();
-  const { invoices, loading, refetch } = useInvoices();
+  const [quoteInterest, setQuoteInterest] = useState<string | null>(null);
+
+  const requestQuote = useCallback((interest: string) => {
+    setQuoteInterest(interest);
+    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
 
   return (
-    <Layout route={route} navigate={navigate}>
-      {route.name === 'dashboard' && (
-        <Dashboard invoices={invoices} loading={loading} navigate={navigate} />
-      )}
-      {route.name === 'scan' && <ScanPage navigate={navigate} />}
-      {route.name === 'review' && <ReviewPage id={route.id} navigate={navigate} />}
-      {route.name === 'invoices' && (
-        <InvoicesPage
-          invoices={invoices}
-          loading={loading}
-          navigate={navigate}
-          refetch={refetch}
-        />
-      )}
-      {route.name === 'invoice' && (
-        <InvoiceDetailPage id={route.id} navigate={navigate} />
-      )}
-    </Layout>
+    <div className="min-h-screen bg-white font-sans text-zinc-900 antialiased">
+      <Navbar />
+      <main>
+        <Hero />
+        <Services />
+        <Products className="-my-20" onRequestQuote={requestQuote} />
+        <Capabilities />
+        <Contact interest={quoteInterest} />
+      </main>
+      <Footer />
+    </div>
   );
 }
 
